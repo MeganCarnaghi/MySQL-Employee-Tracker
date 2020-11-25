@@ -135,8 +135,14 @@ function addEmployee() {
 // A function to add a new department
 function addDepartment() {
   const newDepartment = inquirer.prompt([
-
+    {
+      name: "department",
+      type: "input",
+      message: "What is the name of the department you'd like to add?"
+    }
   ])
+  db.insertDepartment(newDepartment);
+  console.log(`${department} has been added.`)
 }
 
 // A function to add a new role

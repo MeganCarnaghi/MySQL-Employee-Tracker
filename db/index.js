@@ -25,13 +25,19 @@ class SQLqueries {
     }
 
     insertEmployee(newEmployee) {
-        connection.query("INSERT INTO employee SET ?", newEmployee, function(err, res) {
+        connection.query("INSERT INTO employees SET ?", newEmployee, function(err, res) {
             if(err) throw err;
         });
     }
 
     insertDepartment(newDepartment) {
-        connection.query("INSERT INTO employee SET ?", newDepartment, function(err, res) {
+        connection.query("INSERT INTO departments SET ?", newDepartment, function(err, res) {
+            if(err) throw err;
+        })
+    }
+
+    insertRole(newRole) {
+        connection.query("INSERT INTO roles SET ?", newRole, function(err, res) {
             if(err) throw err;
         })
     }
