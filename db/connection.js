@@ -10,6 +10,14 @@ var connection = mysql.createConnection({
   database: "employeetracker_db"
 });
 
-connection.connect();
+  // Initiate MySQL onnection
+  connection.connect(function(err) {
+    if (err) {
+      console.error("error connecting: " + err.stack);
+      return;
+    }
+    console.log("connected as id " + connection.threadId);
+    startApp()
+});
 
 module.exports = connection;

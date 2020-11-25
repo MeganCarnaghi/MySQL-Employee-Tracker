@@ -69,7 +69,7 @@ function promptUser(){
         break;
 
         case "Add a Department":
-        addDept();
+        addDepartment();
         break;
 
         case "Add a Role":
@@ -82,41 +82,37 @@ function promptUser(){
 
         case "Exit":
         connection.end();
+        console.log ("Thank you. You are now existing the application.");
         break;
       }
     })
 
 
 // A function to display all of the employees
-function viewAllEmployees()
+function viewAllEmployees() {
+  const allEmployees = db.selectEmployees();
+  console.table(allEmployees);
+  promptUser();
+};
 
 // A function to display all departments
 function viewAllDepts() {
-    connection.query("SELECT * FROM departments", function(err, res) {
-      if (err) throw err;
-      console.table(res);
-  });
+  const allDepts = db.selectDepartments();
+  console.table(allDepts);
+  promptUser();
 };
 
 // A function to display all roles
 function viewAllRoles() {
-  connection.query("SELECT * FROM roles", function(err, res) {
-    if (err) throw err;
-    console.table(res);
-});
+  const allRoles = db.selectRoles();
+  console.table(allRoles);
+  promptUser();
 };
 
-// A function to add an employee
+
+// A function to add a new employee
 function addEmployee() {
-  const newEmployee = {
-    firstName: "",
-    lastName: "", 
-    roleID: 0, 
-    managerID: 0
-};
-
-  inquirer
-  .prompt([
+  const newEmployee = inquirer.prompt([
   {
     name: "firstName",
     type: "input",
@@ -134,37 +130,23 @@ function addEmployee() {
   }
   ]);
 
-  then(function(answer) {
-    var query = "INSERT INTO employees SET ?";
-    connection.query(query, { add: answer.add }, function(err, res) {
-      if (err) throw err;
-    })
-  })
 };
 
-// A function to remove an employee
-function removeEmployee() {
-  inquirer
-  .prompt({
-    name: "remove",
-    type: "input",
-    message: "What is the first and last name of the employee you would like to remove?"
-  })
-  .then(function(answer) {
-    var query = "DELETE FROM employees WHERE ?";
-    connection.query(query, { remove: answer.remove }, function(err, res) {
-      if (err) throw err;
-      console.log("That person does not exist in the database.")
-      for (var i = 0; i < res.length; i++) {
-        console.log(res[i].first_name + res[i].last_name + " has been removed from the database.");
-      }
-      promptUser();
-    });
-  });
+// A function to add a new department
+function addDepartment() {
+  const newDepartment = inquirer.prompt([
+
+  ])
+}
+
+// A function to add a new role
+function addRole(){
+  const newRole = inquirer.prompt([
+
+  ])
 }
 
 // A function to update an employee's role
 function updateRole()
 
-// A function to update an employee's manager
-function updateManager()
+module.exports = new SQLqueries(connection);
