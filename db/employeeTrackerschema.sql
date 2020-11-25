@@ -12,7 +12,7 @@ last_name VARCHAR(30) NOT NULL,
 role_id INTEGER(10) NOT NULL,
 manager_id INTEGER(10) NULL,
 PRIMARY KEY (id),
-CONSTRAINT FOREIGN KEY (role_id) REFERENCES role(id),
+FOREIGN KEY (role_id) REFERENCES role(id),
 FOREIGN KEY (manager_id) REFERENCES employee (id)
 );
 
