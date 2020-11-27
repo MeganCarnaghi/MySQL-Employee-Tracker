@@ -1,32 +1,4 @@
-USE employee_trackerDB;
-
--- Insert data into the employee table
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Karen", "Short", "1", "9");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Lisa", "Matthews", "2", "1");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Jim", "Harding", "3", "9");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Edward", "Smith", "4", "3");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Tina", "Barclay", "5", "null");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Alex", "Nash", "6", "5");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Wendy", "Curtis", "7", "3");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Natalie", "Sutka", "8", "7");
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Megan", "Carnaghi", "9", "null");
+USE employeeTracker_db;
 
 -- Insert data into the department table
 INSERT INTO department (name)
@@ -67,7 +39,28 @@ VALUES ("Customer Service Manager", "100000", 4);
 INSERT INTO role (title, salary, department_id)
 VALUES ("Customer Service Specialist", "50000", 4);
 
-INSERT INTO role (title, salary, department_id)
-VALUES ("CEO", "500000", "null");
 
+-- Insert data into the employee table
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Karen", "Short", "1", null);
 
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Lisa", "Matthews", "2", "1");
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Jim", "Harding", "3", null);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Edward", "Smith", "4", 3);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Tina", "Barclay", "5", null);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Alex", "Nash", "6", "5");
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Wendy", "Curtis", "7", null);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Natalie", "Sutka", "8", "7");
