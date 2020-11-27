@@ -1,0 +1,30 @@
+{
+  "name": "mysql-employee-tracker",
+  "version": "1.0.0",
+  "description": "A command-line application for managing a company's employees using Node, Inquirer, and MySQL.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeganCarnaghi/MySQL-Employee-Tracker.git"
+  },
+  "keywords": [
+    "node.js",
+    "npm",
+    "MySQL",
+    "database"
+  ],
+  "author": "Megan Carnaghi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MeganCarnaghi/MySQL-Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/MeganCarnaghi/MySQL-Employee-Tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
