@@ -6,32 +6,32 @@ USE employee_trackerDB;
 
 -- Create the employees table
 CREATE TABLE employees (
-id INTEGER AUTO_INCREMENT NOT NULL,
+id INTEGER UNSIGNED AUTO_INCREMENT NOT NULL,
 first_name VARCHAR(30) NOT NULL,
 last_name VARCHAR(30) NOT NULL,
-role_id INTEGER(10) NOT NULL,
-manager_id INTEGER(10) NULL,
+role_id INTEGER(10) UNSIGNED NOT NULL,
+manager_id INTEGER(10) UNSIGNED NULL,
 PRIMARY KEY (id),
-FOREIGN KEY (role_id) REFERENCES role(id),
-FOREIGN KEY (manager_id) REFERENCES employee (id)
+CONSTRAINT fkey_role FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE,
+CONSTRAINT fkey_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL,
 );
 
 
 -- Create the departments table
 CREATE TABLE departments (
-id INTEGER AUTO_INCREMENT NOT NULL,
-name VARCHAR (30) NOT NULL,
+id INTEGER UNSIGNED AUTO_INCREMENT,
+name VARCHAR(30) UNIQUE NOT NULL,
 PRIMARY KEY (id),
 );
 
 -- Create the roles table
 CREATE TABLE roles (
-id INT AUTO_INCREMENT NOT NULL,
-title VARCHAR(30) NOT NULL,
-salary DECIMAL(10,2) NOT NULL,
-department_id INTEGER NOT NULL,
--- FOREIGN KEY (department_id) REFERENCES department(id)
-
+id INTEGER UNSIGNED AUTO_INCREMENT,
+title VARCHAR(30) UNIQUE NOT NULL,
+salary DECIMAL UNSIGNED NOT NULL,
+department_id INT UNSIGNED NOT NULL,
+PRIMARY KEY (id),
+CONSTRAINT fkey_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE,
 );
 
 
