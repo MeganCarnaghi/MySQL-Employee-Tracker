@@ -7,14 +7,14 @@ var connection = mysql.createConnection({
   port: 3306,
   user: "root",
   password: "GusSaysWoof!!",
-  database: "employeetracker_db"
+  database: "employeeTracker_db"
 });
 
+  // Initiate MySQL onnection
   // Initiate MySQL onnection
   connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
-    cli();
   });
 
 module.exports = connection;
