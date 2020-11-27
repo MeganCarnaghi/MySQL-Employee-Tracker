@@ -10,8 +10,7 @@ var connection = mysql.createConnection({
   database: "employeeTracker_db"
 });
 
-  // Initiate MySQL onnection
-  // Initiate MySQL onnection
+  // Initiate MySQL connection
   connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
