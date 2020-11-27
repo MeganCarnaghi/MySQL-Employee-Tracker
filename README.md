@@ -8,7 +8,7 @@
 * [Links and Screenshot](#links-and-screenshot)
 
 ## Description
-A command-line application for managing a company's employees using node, inquirer, and MySQL.
+A command-line application for managing a company's employees using Node.js, Inquirer, and MySQL.
 
 ## User Story
 As a business owner  
