@@ -43,74 +43,6 @@ var rolesArray = [];
 var employeesArray = [];
 var departmentsArray = [];
 
-// Functions to create JSON arrays of data from the Database
-// Function to create a JSON array of all ROLES
-function rolesJSON(){
-  connection.query("SELECT id, title FROM role;", function (err, res) {
-      res.forEach(function(row){
-          rolesArray.push({id:row.id , title:row.title});
-          employeeRoles.push(row.title);
-      })
-    if (err) throw err;
-  });
-}
-
-// Function to create a JSON array of all EMPLOYEES
-function employeesJSON(){
-  employeeNames.push("NONE");
-  connection.query("SELECT id, first_name, last_name FROM employee;", function (err, res) {
-      res.forEach(function(row){
-          employeesArray.push({id:row.id , first_name:row.first_name, last_name:row.last_name});
-          employeeNames.push(row.first_name + " " + row.last_name);
-      })
-    if (err) throw err;
-  });
-}
-
-// Function to create a JSON array of all DEPARTMENTS
-function departmentsJSON(){
-  connection.query("SELECT id, name FROM department;", function (err, res) {
-      res.forEach(function(row){
-          allDepartments.push(row.name);
-          departmentsArray.push({id:row.id , name:row.name});
-      })
-    if (err) throw err;
-  });
-}
-
-// Function to get ROLE ID from choosen NAMES
-function getRoleId(employeeRole, array){
-  for (var i=0; i<array.length; i++) {
-      if (array[i].title === employeeRole) {
-          return array[i].id;
-          }
-      }
-}
-
-// Function to get MANAGER ID from choosen NAMES
-function getManagerId(managerName, array){
-  if (managerName === "NONE"){
-      return array.id = null;
-    }
-  else{
-  var splitName = managerName.split(" ");
-      for (var i=0; i<array.length; i++) {
-          if (array[i].first_name === splitName[0]) {
-              return array[i].id;
-              }
-          }
-    } 
-  
-}
-
-// Function to get DEPARTMENT ID from choosen NAMES
-function getDeptId(departmentName, array){
-      for (var i=0; i<array.length; i++) {
-          if (array[i].name === departmentName) {
-              return array[i].id;
-              }
-          }
-}
 
 // Function to prompt the user
 function promptUser(){
@@ -164,11 +96,6 @@ function promptUser(){
         employeesJSON();
         rolesJSON();
         updateRole();
-        break;
-
-        case "Remove an Employee":
-        employeesJSON();
-        removeEmployee();
         break;
 
         case "Exit Application":
@@ -331,24 +258,71 @@ function updateRole(){
         })
 }
 
-// Function to REMOVE an employee 
-function removeEmployee() {
-  inquirer
-      .prompt([{
-          name: "empName",
-          type: "list",
-          message: "Choose the employee you want to remove from the database.",
-          choices: employeeNames
-      }
-      ])
-      .then(function(answers) {
-          // Split the name to give in the where clause as in table its two different columns
-          var splitName = answers.empName.split(" ");
-          var query = `DELETE FROM employee WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
-          connection.query(query, function(err, res) {
-              if (err) throw err;
-              console.log("The employee has been removed from the system.");
-              promptUser();
-          });
+//// Functions to create JSON arrays of data from the Database
+// Function to create a JSON array of all ROLES
+function rolesJSON(){
+  connection.query("SELECT id, title FROM role;", function (err, res) {
+      res.forEach(function(row){
+          rolesArray.push({id:row.id , title:row.title});
+          employeeRoles.push(row.title);
       })
+    if (err) throw err;
+  });
+}
+
+// Function to create a JSON array of all EMPLOYEES
+function employeesJSON(){
+  connection.query("SELECT id, first_name, last_name FROM employee;", function (err, res) {
+      res.forEach(function(row){
+          employeesArray.push({id:row.id , first_name:row.first_name, last_name:row.last_name});
+          employeeNames.push(row.first_name + " " + row.last_name);
+      })
+    if (err) throw err;
+  });
+}
+
+// Function to create a JSON array of all DEPARTMENTS
+function departmentsJSON(){
+  connection.query("SELECT id, name FROM department;", function (err, res) {
+      res.forEach(function(row){
+          allDepartments.push(row.name);
+          departmentsArray.push({id:row.id , name:row.name});
+      })
+    if (err) throw err;
+  });
+}
+
+//// Functions to get the IDs
+// Function to get ROLE ID from choosen NAMES
+function getRoleId(employeeRole, array){
+  for (var i=0; i<array.length; i++) {
+      if (array[i].title === employeeRole) {
+          return array[i].id;
+          }
+      }
+}
+
+// Function to get MANAGER ID from choosen NAMES
+function getManagerId(managerName, array){
+  if (managerName === "NONE"){
+      return array.id = null;
+    }
+  else{
+  var splitName = managerName.split(" ");
+      for (var i=0; i<array.length; i++) {
+          if (array[i].first_name === splitName[0]) {
+              return array[i].id;
+              }
+          }
+    } 
+  
+}
+
+// Function to get DEPARTMENT ID from choosen NAMES
+function getDeptId(departmentName, array){
+      for (var i=0; i<array.length; i++) {
+          if (array[i].name === departmentName) {
+              return array[i].id;
+              }
+          }
 }
