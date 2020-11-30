@@ -130,6 +130,8 @@ function promptUser(){
         break;
 
         case "Add an Employee":
+        rolesJSON();
+        employeesJSON();
         addEmployee();
         break;
 
@@ -138,6 +140,7 @@ function promptUser(){
         break;
 
         case "Add a Role":
+        departmentsJSON();
         addRole();
         break;
 
@@ -175,7 +178,8 @@ function viewAllDepts() {
 
 // A function to display all roles
 function viewAllRoles() {
-  connection.query("SELECT id AS ID, title as ROLE, salary as SALARY FROM role", function(err, res) {
+  var query = "SELECT id AS ID, title as ROLE, salary as SALARY FROM role";
+  connection.query(query, function(err, res) {
     if (err) throw err;
     console.table(res);
     promptUser();
@@ -192,7 +196,7 @@ function addEmployee() {
     message: "What is the employee's first name?"
   },
   {
-    name: "LastName",
+    name: "lastName",
     type: "input",
     message: "What is the employee's last name?"
   },
@@ -215,37 +219,43 @@ function addEmployee() {
     let managerId = getManagerId(answers.manager, employeesArray);
 
     function addEmplToDb(answers, roleId, managerId) {
-      let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES('${answers.first_name}','${answers.last_name}',${roleId},${managerId});`
+      var query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES('${answers.firstName}','${answers.lastName}',${roleId},${managerId})`;
       connection.query(query, function(err, res) {
       if (err) throw err;
-      console.log(res.affectedRows + " record INSERTED");
+      console.log("The new employee has been added to the database.");
+      promptUser();
     });
   }
   addEmplToDb(answers,roleId,managerId);
-  promptUser();
   })
 }
 };
 
 
-// // A function to add a new department
-// function addDepartment() {
-//   const newDepartment = inquirer.prompt([
-//     {
-//       name: "department",
-//       type: "input",
-//       message: "What is the name of the department you'd like to add?"
-//     }
-//   ])
-//   db.insertDepartment(newDepartment);
-//   console.log(`${department} has been added.`)
-// }
+// A function to add a new department
+function addDepartment() {
+  inquirer.prompt([
+    {
+      name: "department",
+      type: "input",
+      message: "What is the name of the department you'd like to add?"
+    }
+  ])
+.then(function(answers) {
+  var query = `INSERT INTO department (name) VALUES('${answers.department}')`;
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+    console.log("The department has been added to the data base.")
+    promptUser();
+  })
+})
+}
 
-// // A function to add a new role
-// function addRole(){
-//   const newRole = inquirer.prompt([
+// A function to add a new role
+function addRole(){
+  const newRole = inquirer.prompt([
 
-//   ])
-// }
+  ])
+}
 
 // // A function to update an employee's role
