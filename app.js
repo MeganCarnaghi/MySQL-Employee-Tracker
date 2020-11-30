@@ -110,6 +110,7 @@ function promptUser(){
           "Add a Department",
           "Add a Role",
           "Update an Employee's Role",
+          "Remove an Employee",
           "Exit Application"
         ]
     })
@@ -149,10 +150,16 @@ function promptUser(){
         updateRole();
         break;
 
+        case "Remove an Employee":
+        employeesJSON();
+        removeEmployee();
+        break;
+
         case "Exit Application":
         connection.end();
         console.log("Thank you. You are now exiting the application.");
         process.exit();
+        break;
       }
     });
   }
@@ -306,4 +313,26 @@ function updateRole(){
             console.log("The employee's role has been updated.")
           })
         })
+}
+
+// Function to REMOVE an employee 
+function removeEmployee() {
+  inquirer
+      .prompt([{
+          name: "empName",
+          type: "list",
+          message: "Choose the employee you want to remove from the database.",
+          choices: employeeNames
+      }
+      ])
+      .then(function(answers) {
+          // Split the name to give in the where clause as in table its two different columns
+          var splitName = answers.empName.split(" ");
+          var query = `DELETE FROM employee WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
+          connection.query(query, function(err, res) {
+              if (err) throw err;
+              console.log("The employee has been removed from the system.");
+              promptUser();
+          });
+      })
 }
