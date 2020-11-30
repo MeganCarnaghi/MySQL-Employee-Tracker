@@ -20,9 +20,9 @@ var connection = mysql.createConnection({
   });
 
 // Create empty arrays for prompt choices
-let employeeRoles = [];
-let employeeNames = [];
-let allDepartments = [];
+var employeeRoles = [];
+var employeeNames = [];
+var allDepartments = [];
 var rolesArray = [];
 var employeesArray = [];
 var departmentsArray = [];
@@ -41,8 +41,7 @@ function rolesJSON(){
 
 // Function to create a JSON array of all EMPLOYEES
 function employeesJSON(){
-  employeeNames.push("NONE");
-
+  // employeeNames.push("NONE");
   connection.query("SELECT id, first_name, last_name FROM employee;", function (err, res) {
       res.forEach(function(row){
           employeesArray.push({id:row.id , first_name:row.first_name, last_name:row.last_name});
@@ -102,7 +101,7 @@ function promptUser(){
     inquirer.prompt({
         type: "list",
         name: "action",
-        message: "Do would you like to do?",
+        message: "what would you like to do?",
         choices: [
           "View All Employees",
           "View All Departments",
@@ -145,6 +144,8 @@ function promptUser(){
         break;
 
         case "Update an Employee's Role":
+        employeesJSON();
+        rolesJSON();
         updateRole();
         break;
 
@@ -153,7 +154,8 @@ function promptUser(){
         console.log("Thank you. You are now exiting the application.");
         process.exit();
       }
-    })
+    });
+  }
 
 
 // A function to display all of the employees
@@ -229,8 +231,6 @@ function addEmployee() {
   addEmplToDb(answers,roleId,managerId);
   })
 }
-};
-
 
 // A function to add a new department
 function addDepartment() {
@@ -245,7 +245,7 @@ function addDepartment() {
   var query = `INSERT INTO department (name) VALUES('${answers.department}')`;
   connection.query(query, function(err, res) {
     if (err) throw err;
-    console.log("The department has been added to the data base.")
+    console.log("The department has been added to the database.")
     promptUser();
   })
 })
@@ -253,9 +253,58 @@ function addDepartment() {
 
 // A function to add a new role
 function addRole(){
-  const newRole = inquirer.prompt([
-
+inquirer.prompt([
+  {
+    name: "title",
+    type: "input",
+    message: "What is the name of the role you'd like to add?"
+  },
+  {
+    name: "salary",
+    type: "input",
+    message: "What is the salary for this new role?"
+  },
+  {
+    name: "department",
+    type: "list",
+    message: "What department is this role a part of?",
+    choices: allDepartments
+  }
   ])
+  .then(function(answers) {
+    let deptId = getDeptId(answers.department, departmentsArray);
+    var query = `INSERT INTO role (title, salary, department_id) VALUES('${answers.title}','${answers.salary}',${deptId})`;
+    connection.query(query, function(err, res) {
+      if (err) throw err;
+      console.log("The role has been added to the database.");
+      promptUser();
+    })
+  })
 }
 
-// // A function to update an employee's role
+// A function to update an employee's information
+function updateRole(){
+  inquirer.prompt([
+    {
+    name: "employeeName",
+    type: "list",
+    message: "Which employee you want to update?",
+    choices: employeeNames
+  },
+  {
+    name: "employeeRole",
+    type: "list",
+    message: "What do you want to update the employee's role to?",
+    choices: employeeRoles
+  }
+])
+  .then(function(answers){
+          var splitName = answers.employeeName.split ("");
+          var roleId = getRoleID(answers.employeeRole, rolesArray);
+          var query = `UPDATE employee SET role_id='${roleId}' WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`  
+          connection.query(query, function(err, res){
+            if (err) throw err;
+            console.log("The employee's role has been updated.")
+          })
+        })
+      }
