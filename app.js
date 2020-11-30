@@ -1,8 +1,8 @@
 // Dependencies
 const inquirer = require("inquirer");
-// const connection = require("./connection.js");
-require("console.table");
+const logo = require("asciiart-logo");
 const mysql = require("mysql");
+require("console.table");
 
 // Create connection to database
 var connection = mysql.createConnection({
@@ -16,8 +16,24 @@ var connection = mysql.createConnection({
   // Initiate MySQL connection
   connection.connect(function(err) {
     if (err) throw err;
+    displayLogo();
     promptUser();
   });
+
+// A function to display the logo
+function displayLogo(){
+  const logoText = logo(
+    {
+      name: "Employee Tracker",
+      lineChars: 20,
+      padding: 2,
+      margin: 2,
+      borderColor: 'yellow',
+      logoColor: 'bold-green',
+    }
+      ).render();
+  console.log(logoText);
+}
 
 // Create empty arrays for prompt choices
 var employeeRoles = [];
@@ -294,7 +310,7 @@ function updateRole(){
     {
       name: "empToUpdate",
       type: "list",
-      message: "Which employee would you like to updat?",
+      message: "Which employee would you like to update?",
       choices: employeeNames
     },
     {
