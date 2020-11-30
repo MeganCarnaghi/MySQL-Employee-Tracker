@@ -1,9 +1,23 @@
 // Dependencies
 const inquirer = require("inquirer");
-const connection = require("./connection.js");
-require ("console.table");
+// const connection = require("./connection.js");
+require("console.table");
+const mysql = require("mysql");
 
-promptUser();
+// Create connection to database
+var connection = mysql.createConnection({
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "GusSaysWoof!!",
+  database: "employeeTracker_db"
+});
+
+  // Initiate MySQL connection
+  connection.connect(function(err) {
+    if (err) throw err;
+    promptUser();
+  });
 
 // Create empty arrays for prompt choices
 let employeeRoles = [];
@@ -97,7 +111,7 @@ function promptUser(){
           "Add a Department",
           "Add a Role",
           "Update an Employee's Role",
-          "Quit"
+          "Exit Application"
         ]
     })
     .then(function(answer) {
@@ -131,31 +145,32 @@ function promptUser(){
         updateRole();
         break;
 
-        case "Exit":
+        case "Exit Application":
         connection.end();
-        console.log ("Thank you. You are now existing the application.");
-        break;
+        console.log("Thank you. You are now exiting the application.");
+        process.exit();
       }
     })
 
 
 // A function to display all of the employees
 function viewAllEmployees() {
-  connection.query("SELECT employee.id AS ID, employee.first_name AS FIRST NAME, employee.last_name AS LAST NAME, role.title AS ROLE, department.name AS DEPARTMENT, role.salary AS SALARY, CONCAT(manager.first_name, ' ', manager.last_name) AS MANAGER FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
-  , function(err, res) {
+var query = "SELECT employee.id AS ID, employee.first_name AS 'FIRST NAME', employee.last_name AS 'LAST NAME', role.title AS ROLE, department.name AS DEPARTMENT, role.salary AS SALARY, CONCAT(manager.first_name, ' ', manager.last_name) AS MANAGER FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
+  connection.query(query, function(err, res) {
       if (err) throw err;
       console.table(res);
+      promptUser();
   });
-  promptUser();
 };
 
 // A function to display all departments
 function viewAllDepts() {
-  connection.query("SELECT id AS ID, name as DEPARTMENT FROM department", function(err, res) {
+  var query  = "SELECT id AS ID, name as DEPARTMENT FROM department";
+  connection.query(query, function(err, res) {
     if (err) throw err;
     console.table(res);
+    promptUser();
 });
-  promptUser();
 };
 
 // A function to display all roles
@@ -163,8 +178,8 @@ function viewAllRoles() {
   connection.query("SELECT id AS ID, title as ROLE, salary as SALARY FROM role", function(err, res) {
     if (err) throw err;
     console.table(res);
+    promptUser();
 });
-  promptUser();
 };
 
 
