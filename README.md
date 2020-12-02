@@ -16,13 +16,13 @@ I want to be able to view and manage the departments, roles, and employees in my
 So that I can organize and plan my business  
 
 ## Installation
-To run the application locally, use the following command to clone this repository.  
+To run the application locally, use the following command to clone this repository: 
 `git clone https://github.com/MeganCarnaghi/MySQL-Employee-Tracker.git`  
 
-Once you're in the proper directory, run the following command in the Terminal to install the application depndencies.  
+Once you're in the proper directory, run the following command in the Terminal to install the application depndencies:  
 `npm install`  
 
-Next, run the following command to start the application.  
+Next, run the following command to start the application: 
 `node app.js`
 
 ## Technologies Used
