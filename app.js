@@ -113,7 +113,7 @@ function viewAllEmployees() {
 var query = "SELECT employee.id AS ID, employee.first_name AS 'FIRST NAME', employee.last_name AS 'LAST NAME', role.title AS ROLE, department.name AS DEPARTMENT, role.salary AS SALARY, CONCAT(manager.first_name, ' ', manager.last_name) AS MANAGER FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
   connection.query(query, function(err, res) {
       if (err) throw err;
-      console.table(res);
+      console.table("\n", res, "\n");
       promptUser();
   });
 };
@@ -123,7 +123,7 @@ function viewAllDepts() {
   var query  = "SELECT id AS ID, name as DEPARTMENT FROM department";
   connection.query(query, function(err, res) {
     if (err) throw err;
-    console.table(res);
+    console.table("\n", res, "\n");
     promptUser();
 });
 };
@@ -133,7 +133,7 @@ function viewAllRoles() {
   var query = "SELECT id AS ID, title as ROLE, salary as SALARY FROM role";
   connection.query(query, function(err, res) {
     if (err) throw err;
-    console.table(res);
+    console.table("\n", res, "\n");
     promptUser();
 });
 };
@@ -174,7 +174,7 @@ function addEmployee() {
       var query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES('${answers.firstName}','${answers.lastName}',${roleId},${managerId})`;
       connection.query(query, function(err, res) {
       if (err) throw err;
-      console.log("The new employee has been added to the database.");
+      console.log("\n", "The new employee has been added to the database.", "\n");
       promptUser();
     });
   }
@@ -195,7 +195,7 @@ function addDepartment() {
   var query = `INSERT INTO department (name) VALUES('${answers.department}')`;
   connection.query(query, function(err, res) {
     if (err) throw err;
-    console.log("The department has been added to the database.")
+    console.log("\n", "The department has been added to the database.", "\n")
     promptUser();
   })
 })
@@ -226,7 +226,7 @@ inquirer.prompt([
     var query = `INSERT INTO role (title, salary, department_id) VALUES('${answers.title}','${answers.salary}',${deptId})`;
     connection.query(query, function(err, res) {
       if (err) throw err;
-      console.log("The role has been added to the database.");
+      console.log("\n", "The role has been added to the database.", "\n");
       promptUser();
     })
   })
@@ -253,7 +253,7 @@ function updateRole(){
           var query = `UPDATE employee SET role_id='${roleId}' WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`  
           connection.query(query, function(err, res){
             if (err) throw err;
-            console.log("The employee's role has been updated.")
+            console.log("\n", "The employee's role has been updated.", "\n")
           })
         })
 }

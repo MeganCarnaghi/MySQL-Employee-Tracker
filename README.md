@@ -8,7 +8,7 @@
 * [Links and Screenshot](#links-and-screenshot)
 
 ## Description
-A command-line application for managing a company's employees using Node.js, Inquirer, and MySQL.
+A command-line application for managing a company's employees using Node, Inquirer, and MySQL.
 
 ## User Story
 As a business owner  
@@ -16,21 +16,18 @@ I want to be able to view and manage the departments, roles, and employees in my
 So that I can organize and plan my business  
 
 ## Installation
-* Navigate to the proper directory containing the app.js file.  
+To run the application locally, use the following command to clone this repository.  
+`git clone https://github.com/MeganCarnaghi/MySQL-Employee-Tracker.git`  
 
-* In the Terminal, run the following commands to make sure you have the proper pacakges installed:  
+Once you're in the proper directory, run the following command in the Terminal to install the application depndencies.  
+`npm install`  
 
-    1. `npm install`
-    2. `npm install mysql`
-    3. `npm i inquirer`
-    4. `npm i console.table`
-    5. `npm i asciiart-logo`  
-
-* In the terminal, run the `node app.js` command to start the application.
+Next, run the following command to start the application.  
+`node app.js`
 
 ## Technologies Used
 * JavaScript
-* Node.js
+* Node
 * NPM Packages (Inquirer, console.table, mysql, asciiart-logo)
 
 ## Links and Screenshot
