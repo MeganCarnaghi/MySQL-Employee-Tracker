@@ -35,85 +35,6 @@ function displayLogo(){
   console.log(logoText);
 }
 
-// Create empty arrays for prompt choices
-var employeeRoles = [];
-var employeeNames = [];
-var allDepartments = [];
-var rolesArray = [];
-var employeesArray = [];
-var departmentsArray = [];
-
-//// Functions to create JSON arrays of data from the Database
-// Function to create a JSON array of all ROLES
-function rolesJSON(){
-  connection.query("SELECT id, title FROM role;", function (err, res) {
-      res.forEach(function(row){
-          rolesArray.push({id:row.id , title:row.title});
-          employeeRoles.push(row.title);
-      })
-    if (err) throw err;
-  });
-}
-
-// Function to create a JSON array of all EMPLOYEES
-function employeesJSON(){
-  connection.query("SELECT id, first_name, last_name FROM employee;", function (err, res) {
-      res.forEach(function(row){
-          employeesArray.push({id:row.id , first_name:row.first_name, last_name:row.last_name});
-          employeeNames.push(row.first_name + " " + row.last_name);
-      })
-    if (err) throw err;
-  });
-}
-
-// Function to create a JSON array of all DEPARTMENTS
-function departmentsJSON(){
-  connection.query("SELECT id, name FROM department;", function (err, res) {
-      res.forEach(function(row){
-          allDepartments.push(row.name);
-          departmentsArray.push({id:row.id , name:row.name});
-      })
-    if (err) throw err;
-  });
-}
-
-//// Functions to get the IDs
-// Function to get ROLE ID from choosen NAMES
-function getRoleId(employeeRole, array){
-  for (var i=0; i<array.length; i++) {
-      if (array[i].title === employeeRole) {
-          return array[i].id;
-          }
-      }
-}
-
-// Function to get MANAGER ID from choosen NAMES
-function getManagerId(managerName, array){
-  if (managerName === "NONE"){
-      return array.id = null;
-    }
-  else{
-  var splitName = managerName.split(" ");
-      for (var i=0; i<array.length; i++) {
-          if (array[i].first_name === splitName[0]) {
-              return array[i].id;
-              }
-          }
-    } 
-  
-}
-
-// Function to get DEPARTMENT ID from choosen NAMES
-function getDeptId(departmentName, array){
-      for (var i=0; i<array.length; i++) {
-          if (array[i].name === departmentName) {
-              return array[i].id;
-              }
-          }
-}
-
-
-
 // Function to prompt the user
 function promptUser(){
     inquirer.prompt({
@@ -128,10 +49,11 @@ function promptUser(){
           "Add a Department",
           "Add a Role",
           "Update an Employee's Role",
+          "Query Manager",
           "Exit Application"
         ]
     })
-    .then(function(answer) {
+    .then((answer) => {
       switch(answer.action) {
 
         case "View All Employees":
@@ -147,8 +69,6 @@ function promptUser(){
         break;
 
         case "Add an Employee":
-        rolesJSON();
-        employeesJSON();
         addEmployee();
         break;
 
@@ -157,14 +77,15 @@ function promptUser(){
         break;
 
         case "Add a Role":
-        departmentsJSON();
         addRole();
         break;
 
         case "Update an Employee's Role":
-        employeesJSON();
-        rolesJSON();
         updateRole();
+        break;
+
+        case "Query Manager":
+        queryManagers();
         break;
 
         case "Exit Application":
@@ -177,202 +98,68 @@ function promptUser(){
   }
 
 
-// A function to display all of the employees
+// A FUNCTION TO DISPLAY ALL EMPLOYEES
 function viewAllEmployees() {
-var query = "SELECT employee.id AS ID, employee.first_name AS 'FIRST NAME', employee.last_name AS 'LAST NAME', role.title AS ROLE, department.name AS DEPARTMENT, role.salary AS SALARY, CONCAT(manager.first_name, ' ', manager.last_name) AS MANAGER FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
-  connection.query(query, function(err, res) {
+  // SQL query to get all of the employees from the database
+const query = "SELECT employee.id AS ID, employee.first_name AS 'FIRST NAME', employee.last_name AS 'LAST NAME', role.title AS ROLE, department.name AS DEPARTMENT, role.salary AS SALARY, CONCAT(manager.first_name, ' ', manager.last_name) AS MANAGER FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
+  connection.query(query, (err, res) => {
       if (err) throw err;
       console.table("\n", res, "\n");
       promptUser();
   });
 };
 
-// A function to display all departments
+// A FUNCTION TO DISPLAY ALL DEPARTMENTS
 function viewAllDepts() {
-  var query  = "SELECT id AS ID, name as DEPARTMENT FROM department";
-  connection.query(query, function(err, res) {
-    if (err) throw err;
-    console.table("\n", res, "\n");
-    promptUser();
-});
-};
-
-// A function to display all roles
-function viewAllRoles() {
-  var query = "SELECT id AS ID, title as ROLE, salary as SALARY FROM role";
-  connection.query(query, function(err, res) {
-    if (err) throw err;
-    console.table("\n", res, "\n");
-    promptUser();
-});
-};
-
-
-// // A function to add a new employee
-function addEmployee() {
-  inquirer.prompt([
-  {
-    name: "firstName",
-    type: "input",
-    message: "What is the employee's first name?"
-  },
-  {
-    name: "lastName",
-    type: "input",
-    message: "What is the employee's last name?"
-  },
-  {
-    name: "role",
-    type: "list",
-    message: "What is the employee's role?",
-    choices: employeeRoles
-  },
-  {
-    name: "manager",
-    type: "list",
-    message: "Who is the manager for this employee?",
-    choices: employeeNames
-  }
-  ])
-
-  .then(function(answers) {
-    let roleId = getRoleId(answers.role, rolesArray);
-    let managerId = getManagerId(answers.manager, employeesArray);
-
-    function addEmplToDb(answers, roleId, managerId) {
-      var query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES('${answers.firstName}','${answers.lastName}',${roleId},${managerId})`;
-      connection.query(query, function(err, res) {
-      if (err) throw err;
-      console.log("\n", "The new employee has been added to the database.", "\n");
-      promptUser();
-    });
-  }
-  addEmplToDb(answers,roleId,managerId);
-  })
-}
-
-// A function to add a new department
-function addDepartment() {
-  inquirer.prompt([
-    {
-      name: "department",
-      type: "input",
-      message: "What is the name of the department you'd like to add?"
-    }
-  ])
-.then(function(answers) {
-  var query = `INSERT INTO department (name) VALUES('${answers.department}')`;
-  connection.query(query, function(err, res) {
-    if (err) throw err;
-    console.log("\n", "The department has been added to the database.", "\n")
-    promptUser();
-  })
-})
-}
-
-// A function to add a new role
-function addRole(){
-inquirer.prompt([
-  {
-    name: "title",
-    type: "input",
-    message: "What is the name of the role you'd like to add?"
-  },
-  {
-    name: "salary",
-    type: "input",
-    message: "What is the salary for this new role?"
-  },
-  {
-    name: "department",
-    type: "list",
-    message: "What department is this role a part of?",
-    choices: allDepartments
-  }
-  ])
-  .then(function(answers) {
-    let deptId = getDeptId(answers.department, departmentsArray);
-    var query = `INSERT INTO role (title, salary, department_id) VALUES('${answers.title}','${answers.salary}',${deptId})`;
-    connection.query(query, function(err, res) {
-      if (err) throw err;
-      console.log("\n", "The role has been added to the database.", "\n");
-      promptUser();
-    })
-  })
-}
-
-// function updateRole(){
-//   inquirer.prompt([
-//     {
-//       name: "empToUpdate",
-//       type: "list",
-//       message: "Which employee would you like to update?",
-//       choices: employeeNames
-//     },
-//     {
-//       name: "newRole",
-//       type: "list",
-//       message: "What new role do you want to set for this employee?",
-//       choices: employeeRoles
-//     }
-//     ])
-//         .then(function(answers){
-//           var splitName = answers.empToUpdate.split ("");
-//           var roleId = getRoleID(answers.newRole, rolesArray);
-//           var query = `UPDATE employee SET role_id='${roleId}' WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`  
-//           connection.query(query, function(err, res){
-//             if (err) throw err;
-//             console.log("\n", "The employee's role has been updated.", "\n")
-//           })
-//         })
-// }
-
-function updateRole(){
-  // Initalize the updateRole object
-  const updatedEmployee = {
-      id: 0,
-      roleID: 0, 
-  };
-  // Create SQL query for employees
-  const query = `
-  SELECT id, concat(employee.first_name, " ", employee.last_name) AS employee_full_name
-  FROM employee ;`;
+    // SQL query to get all of the departments from the database
+  const query  = "SELECT id AS ID, name as DEPARTMENT FROM department";
   connection.query(query, (err, res) => {
-      if (err) throw err;
-      // Extract all employee names and ids to arrays
-      let employees = [];
-      let employeeNames = [];
-      for (let i=0;i<res.length;i++){
-          employees.push({
-              id: res[i].id,
-              fullName: res[i].employee_full_name});
-          employeeNames.push(res[i].employee_full_name);
-      }
-      // Prompt user for the employee to update
-      inquirer
-      .prompt({
-          type: "list",
-          name: "employeePromptChoice",
-          message: "Select employee to update:",
-          choices: employeeNames
-        })
-      .then(answer => {
-          //get id of chosen employee
-          const chosenEmployee = answer.employeePromptChoice;
-          let chosenEmployeeID;
-          for (let i = 0; i < employees.length; i++) {
-            if (employees[i].fullName === chosenEmployee) {
-              chosenEmployeeID = employees[i].id;
-              break;
-            }
-          }
-          //set updatedEmployee id
-          updatedEmployee.id = chosenEmployeeID;
-          //sql query for roles
+    if (err) throw err;
+    console.table("\n", res, "\n");
+    promptUser();
+});
+};
+
+// A FUNCTION TO DISPLAY ALL ROLES
+function viewAllRoles() {
+  // SQL query to get all of the roles from the database
+  const query = "SELECT id AS ID, title as ROLE, salary as SALARY FROM role";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    console.table("\n", res, "\n");
+    promptUser();
+});
+};
+
+// A FUNCTIONT TO ADD A NEW EMPLOYEE TO THE DATABASE
+function addEmployee(){
+  // Initialize the newEmployee object
+  const newEmployee = {
+      firstName: "",
+      lastName: "", 
+      roleID: 0, 
+      managerID: 0
+  };
+  // A prompt to ask the user for the employee's first and last name
+  inquirer
+      .prompt([{
+          name: "firstName",
+          message: "What is the new employee's first name?",
+          }, 
+          {
+          name: "lastName",
+          message: "What is the new employee's last name?",
+          }])
+      .then(answers => {
+          // Setting the first and last name for the new employee
+          newEmployee.firstName = answers.firstName;
+          newEmployee.lastName = answers.lastName;
+
+          // Creating a SQL query to get all of the roles
           const query = `SELECT role.title, role.id FROM role;`;
           connection.query(query, (err, res) => {
               if (err) throw err;
-              //extract role names and ids to arrays
+              // Extract the role names and IDs into arrays
               const roles = [];
               const roleNames = [];
               for (let i = 0; i < res.length; i++) {
@@ -382,26 +169,229 @@ function updateRole(){
                   });
                   roleNames.push(res[i].title);
               }
-              //prompt for role selection
+              // ERROR
+              // Prompt the user to get the new employee's role
               inquirer
               .prompt({
                   type: "list",
-                  name: "rolePromptChoice",
+                  name: "empRole",
                   message: "Select Role:",
+                  choices: roleNames
+                })
+              .then(answer => {
+                const chosenRole = answer.empRole;
+                let chosenRoleID;
+                for (let i = 0; i < roles.length; i++) {
+                  if (roles[i].title === chosenRole) {
+                    chosenRoleID = roles[i].id;
+                    break;
+                  }
+                }
+                  // Set the role ID for the new employee
+                  newEmployee.roleID = chosenRoleID;
+                  // A SQL query to get all of the managers' names
+                  const query = `
+                  SELECT DISTINCT concat(manager.first_name, " ", manager.last_name) AS full_name
+                  FROM employee
+                  LEFT JOIN employee AS manager ON manager.id = employee.manager_id;`;
+                  connection.query(query, (err, res) => {
+                    if (err) throw err;
+                    //extract manager names and ids to arrays
+                    const managers = [];
+                    const managerNames = [];
+                    for (let i = 0; i < res.length; i++) {
+                        managerNames.push(res[i].full_name);
+                        managers.push({
+                            id: res[i].id,
+                            fullName: res[i].full_name
+                        });
+                    }
+                      // Prompt the user to select a manager for the new employee
+                      inquirer
+                      .prompt({
+                          type: "list",
+                          name: "empManager",
+                          message: "Who is the manager for the new employee?",
+                          choices: managerNames
+                        })
+                        .then(answer => {
+                          //get id of chosen manager
+                          const chosenManager = answer.managerPromptChoice;   
+                          let chosenManagerID;
+                          for (let i = 0; i < managers.length; i++) {
+                              if (managers[i].fullName === chosenManager){
+                                  chosenManagerID = managers[i].id;
+                                  break;
+                              }
+                          }
+                          // Set the manager ID for the new employee
+                          newEmployee.managerID = chosenManagerID;
+                          // SQL query to add the new employee to the database
+                          const query = "INSERT INTO employee SET ?";
+                          connection.query(query, {
+                              first_name: newEmployee.firstName,
+                              last_name: newEmployee.lastName,
+                              role_id: newEmployee.roleID || 0,
+                              manager_id: newEmployee.managerID || 0
+                              }, (err, res) => {
+                              if (err) throw err;
+                              console.log("The new employee has been added successfully.");
+                          });                            
+                      });
+                  });
+              });
+          });            
+      });
+}
+
+
+// A FUNCTION TO ADD A NEW DEPARTMENT TO THE DATABASE
+function addDepartment() {
+  // Prompt the user to ask what the name of the new department they want to add is
+  inquirer
+    .prompt([
+      {
+        name: "name",
+        type: "input",
+        message: "What is the name of the new department you want to add?",
+      },
+    ])
+    // SQL query to add the new department
+    .then((answer) => {
+      const query = `INSERT INTO department (name) VALUES (?);`;
+      connection.query(query, [answer.name], (err, res) => {
+          if (err) throw err;
+          console.log("\n", "The new department has been added successfully.", "\n")
+          promptUser();
+      }) 
+  });
+}
+
+// A FUNCTION TO ADD A NEW ROLE TO THE DATABASE
+function addRole() {
+//initialize 
+ const departments = [];
+ const departmentNames = [];
+ // Create the SQL query to get the departments and push them into the arrays
+ const query = `SELECT id, name FROM department`;
+ connection.query(query, (err, res) => {
+     if (err) throw err;
+     for (let i=0;i<res.length;i++) {
+         departments.push({
+            id:res[i].id,
+            name:res[i].name});
+         departmentNames.push(res[i].name);   
+     }
+  // Prompt the user regarding the new role they want to add and the specifics for the role
+ inquirer
+     .prompt([
+         {
+         name: "title",
+         type: "input",
+         message: "What is the title of the new role?",
+         },
+         {
+         name: "salary",
+         type: "input",
+         message: "What is the salary for the new role?",
+         },
+         {
+         name: "department",
+         type: "list",
+         message: "Which department does the new role belong to?",
+         choices: departmentNames
+         },
+     ])
+     .then((answer) => {
+     // SQL query to insert the new role
+         let deptId = departments.find((obj) => obj.name === answer.department).id;
+         connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
+         [answer.title, answer.salary, deptId], (err, res) => {
+             if (err) throw err; 
+             console.log("\n", "Your new role has been added successfully.", "\n");
+                 promptUser();
+         });
+        
+     });
+ });
+} 
+
+
+// A FUNCTION TO UPDATE AN EMPLOYEE'S ROLE
+function updateRole(){
+  // Initalize
+  const updatedEmployee = {
+      id: 0,
+      roleID: 0, 
+  };
+  // Create the SQL query to get the list of employees to show the user
+  const query = `SELECT id, concat(employee.first_name, " ", employee.last_name) AS employee_full_name
+  FROM employee ;`;
+  connection.query(query, (err, res) => {
+      if (err) throw err;
+      // Extract all employee names and ids to the arrays
+      let employees = [];
+      let employeeNames = [];
+      for (let i=0;i<res.length;i++){
+          employees.push({
+              id: res[i].id,
+              fullName: res[i].employee_full_name});
+          employeeNames.push(res[i].employee_full_name);
+      }
+      // Prompt the user for which employee to update
+      inquirer
+      .prompt({
+          type: "list",
+          name: "employeeToUpdate",
+          message: "Which employee's role do you want to update?",
+          choices: employeeNames
+        })
+      .then(answer => {
+          // Get the id of the chosen employee
+          const chosenEmployee = answer.employeeToUpdate;
+          let chosenEmployeeID;
+          for (let i = 0; i < employees.length; i++) {
+            if (employees[i].fullName === chosenEmployee) {
+              chosenEmployeeID = employees[i].id;
+              break;
+            }
+          }
+          // Set the id for the updatedEmployee
+          updatedEmployee.id = chosenEmployeeID;
+          //sql query for roles
+          const query = `SELECT role.title, role.id FROM role;`;
+          connection.query(query, (err, res) => {
+              if (err) throw err;
+              // Extract all of the role names and ids to the arrays
+              const roles = [];
+              const roleNames = [];
+              for (let i = 0; i < res.length; i++) {
+                  roles.push({
+                      id: res[i].id,
+                      title: res[i].title
+                  });
+                  roleNames.push(res[i].title);
+              }
+              // Prompt the user for which new role to give the employee
+              inquirer
+              .prompt({
+                  type: "list",
+                  name: "newRole",
+                  message: "What is the new role do you want to give this employee?",
                   choices: roleNames
               })
               .then(answer => {
-                  //get id of chosen role
-                  const chosenRole = answer.rolePromptChoice;
+                  // Get the id of the chosen role
+                  const chosenRole = answer.newRole;
                   let chosenRoleID;
                   for (let i = 0; i < roles.length; i++) {
                       if (roles[i].title === chosenRole){
                           chosenRoleID = roles[i].id;
                       }
                   }
-                  //set updatedEmployee role ID 
+                  // Set the updatedEmployee role id for the new role
                   updatedEmployee.roleID = chosenRoleID;
-                  //sql query to update role
+                  // SQL query to update the employee's role
                   const query = `UPDATE employee SET ? WHERE ?`;
                   connection.query(query, [
                       {
@@ -412,11 +402,29 @@ function updateRole(){
                       }
                       ], (err, res) => {
                       if (err) throw err;
-                      console.log("The employee's role has been updated.");
+
+                      console.log("\n", "The employee's role has been updated.", "\n");
                       promptUser();
                   });
               });
           });            
       });
+  });
+}
+
+//query all managers
+function queryManagers(){
+  const query = `
+  SELECT DISTINCT concat(manager.first_name, " ", manager.last_name) AS full_name
+  FROM employee
+  LEFT JOIN employee AS manager ON manager.id = employee.manager_id;`;
+  connection.query(query, (err, res) => {
+      if (err) throw err;
+      //extract manager names to array
+      const managers = [];
+      for (let i = 0; i < res.length; i++) {
+          managers.push(res[i].full_name);
+      }
+      console.log(res);
   });
 }
