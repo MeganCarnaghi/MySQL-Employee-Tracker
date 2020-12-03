@@ -456,6 +456,7 @@ function removeEmployee() {
           connection.query(query, {id: chosenEmployeeID}, (err, res) => {
               if (err) throw err;
               console.log("\n", "The employee has been removed from the database.", "\n");
+              promptUser();
           });       
       });
   });
