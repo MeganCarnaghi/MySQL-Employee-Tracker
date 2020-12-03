@@ -58,7 +58,6 @@ function promptUser(){
           "Add a Department",
           "Add a Role",
           "Update an Employee's Role",
-          "Remove an Employee",
           "Exit Application"
         ]
     })
@@ -242,7 +241,7 @@ function updateRole(){
     },
     {
       name: "newRole",
-      type: "input",
+      type: "list",
       message: "What new role do you want to set for this employee?",
       choices: employeeRoles
     }
