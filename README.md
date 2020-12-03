@@ -32,7 +32,7 @@ Next, run the following command to start the application:
 
 ## Links and Screenshot
 * Link to GitHub Repository: https://github.com/MeganCarnaghi/MySQL-Employee-Tracker.git
-* Link to Demo Video: 
+* Link to Demo Video: https://bit.ly/39GzM0Q
 
 ![Screenshot](Assets/screenshot.jpg)
 
