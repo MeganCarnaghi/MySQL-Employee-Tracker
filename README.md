@@ -36,7 +36,3 @@ Next, run the following command to start the application:
 
 ![Screenshot](Assets/screenshot.jpg)
 
-
-© Megan Carnaghi, Michigan State University Full-Stack Web Development Bootcamp
-
-
