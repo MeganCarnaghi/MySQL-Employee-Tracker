@@ -6,6 +6,7 @@
 * [Installation](#installation)
 * [Technologies Used](#technologies-used)
 * [Links and Screenshot](#links-and-screenshot)
+* [License] (#license)
 
 ## Description
 A command-line application for managing a company's employees using Node, Inquirer, and MySQL.
@@ -35,4 +36,7 @@ Next, run the following command to start the application:
 * Link to Demo Video: https://bit.ly/39GzM0Q
 
 ![Screenshot](Assets/screenshot.jpg)
+
+## License
+![license](https://img.shields.io/badge/License-MIT-success)
 
